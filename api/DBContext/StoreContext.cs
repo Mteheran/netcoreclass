@@ -13,6 +13,7 @@ namespace api.DBContext
         DbSet<Invoice> Invoices {get;set;}
         DbSet<Product> Products {get;set;}
         DbSet<Sale> Sales {get;set;}
+        DbSet<User> Users {get;set;}
         DbSet<UserType> UserTypes {get;set;}
 
         public StoreContext(DbContextOptions<StoreContext> options) : base(options) 
@@ -38,7 +39,10 @@ namespace api.DBContext
                                 .HasKey(p=> p.IdUser_Type);
             builder.Entity<Sale>()
                                 .ToTable("Sale")
-                                .HasKey(p=> p.IdSale);                    
+                                .HasKey(p=> p.IdSale);   
+            builder.Entity<User>()
+                                .ToTable("User")
+                                .HasKey(p=> p.IdUser);                  
 
             
         }
