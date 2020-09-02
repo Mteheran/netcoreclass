@@ -9,11 +9,11 @@ namespace api.DBContext
 {
     public class StoreContext : DbContext
     {
-        DbSet<Category> Categories {get;set;}
-        DbSet<Invoice> Invoices {get;set;}
-        DbSet<Product> Products {get;set;}
-        DbSet<Sale> Sales {get;set;}
-        DbSet<UserType> UserTypes {get;set;}
+        public DbSet<Category> Categories {get;set;}
+        public DbSet<Invoice> Invoices {get;set;}
+        public DbSet<Product> Products {get;set;}
+        public DbSet<Sale> Sales {get;set;}
+        public DbSet<UserType> UserTypes {get;set;}
 
         public StoreContext(DbContextOptions<StoreContext> options) : base(options) 
         {
@@ -24,6 +24,8 @@ namespace api.DBContext
             builder.Entity<Category>()
                                 .ToTable("Category")
                                 .HasKey(p=> p.IdCategory);
+
+            builder.Entity<Category>().HasData(StoreInitializer.GetCategories());
 
             builder.Entity<Invoice>()
                                 .ToTable("Invoice")
