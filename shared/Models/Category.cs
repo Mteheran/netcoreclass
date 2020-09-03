@@ -1,6 +1,8 @@
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace shared.Models
 {
@@ -11,6 +13,9 @@ namespace shared.Models
         public Guid IdCategory {get;set;} = new Guid();
 
         [MaxLength(250)]
-        public string Description_Category {get;set;} 
+        public string Description_Category {get;set;}
+
+        //[JsonIgnore]
+        public virtual ICollection<Product> Products {get;set;} 
     }
 }

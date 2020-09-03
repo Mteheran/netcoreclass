@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using api.DBContext;
+using Microsoft.EntityFrameworkCore;
 using shared.Models;
 
 namespace api.Controllers
@@ -17,12 +18,13 @@ namespace api.Controllers
         public CategoryController(StoreContext db)
         {
             context = db;
+            context.Database.EnsureCreated();
         } 
 
         [HttpGet]
         public ActionResult<IEnumerable<Category>> Get()
         {
-            return context.Categories;
+            return context.Categories.Include(p=> p.Products).ToList();
         }
 
         [HttpGet("{id}")]

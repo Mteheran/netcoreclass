@@ -18,15 +18,19 @@ namespace api.DBContext
 
         public StoreContext(DbContextOptions<StoreContext> options) : base(options) 
         {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+
+            builder.Entity<Category>().HasKey(p=> p.IdCategory);
+
             builder.Entity<Category>()
                                 .ToTable("Category")
-                                .HasKey(p=> p.IdCategory);
+                                .HasData(StoreInitializer.GetCategories());
 
-            builder.Entity<Category>().HasData(StoreInitializer.GetCategories());
+            builder.Entity<Category>().HasMany<Product>("Products").WithOne("Category");
 
             builder.Entity<Invoice>()
                                 .ToTable("Invoice")
@@ -35,6 +39,12 @@ namespace api.DBContext
             builder.Entity<Product>()
                                 .ToTable("Product")
                                 .HasKey(p=> p.IdProduct);
+
+            builder.Entity<Product>().HasData(StoreInitializer.GetProducts());
+
+            builder.Entity<Product>()
+                                .HasOne<Category>("Category").WithMany("Products").HasForeignKey(p=> p.IdCategory);    
+
 
             builder.Entity<UserType>()
                                 .ToTable("UserType")

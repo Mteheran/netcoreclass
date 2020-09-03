@@ -12,7 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Microsoft.EntityFrameworkCore.Proxies;
 namespace api
 {
     public class Startup
@@ -27,10 +29,12 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+           services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             services.AddDbContext<StoreContext>(p=>
-            p.UseInMemoryDatabase("DBStore"));
+            p.UseLazyLoadingProxies(false).UseInMemoryDatabase("DBStore"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
