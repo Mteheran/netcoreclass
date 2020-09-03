@@ -30,7 +30,9 @@ namespace api.DBContext
                                 .ToTable("Category")
                                 .HasData(StoreInitializer.GetCategories());
 
-            builder.Entity<Category>().HasMany<Product>("Products").WithOne("Category");
+            builder.Entity<Category>().HasMany<Product>("Products")
+                                    .WithOne("Category")
+                                    .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Invoice>()
                                 .ToTable("Invoice")
@@ -43,7 +45,10 @@ namespace api.DBContext
             builder.Entity<Product>().HasData(StoreInitializer.GetProducts());
 
             builder.Entity<Product>()
-                                .HasOne<Category>("Category").WithMany("Products").HasForeignKey(p=> p.IdCategory);    
+                                .HasOne<Category>("Category")
+                                .WithMany("Products")
+                                .HasForeignKey(p=> p.IdCategory)
+                                .OnDelete(DeleteBehavior.Cascade);    
 
 
             builder.Entity<UserType>()
