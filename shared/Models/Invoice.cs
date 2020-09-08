@@ -9,7 +9,7 @@ namespace shared.Models
     {
         [Key]
         [Required]
-        public Guid IdInvoice {get;set;} 
+        public Guid IdInvoice {get;set;} = Guid.NewGuid(); 
 
         [Required]
         public DateTime CreateTime {get;set;}

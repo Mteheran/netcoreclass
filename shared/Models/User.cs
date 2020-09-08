@@ -24,12 +24,11 @@ namespace shared.Models
 
         [Required]
         [MaxLength(100)]
+        [EmailAddress]
         public string Email { get; set;}
-
-        [ForeignKey("UserType")]
         public Guid IdUser_Type {get;set;} 
         public virtual UserType UserType {get;set;} 
 
-        public virtual ICollection<Product> Invoices {get;set;} 
+        public virtual ICollection<Invoice> Invoices {get;set;} 
     }
 }

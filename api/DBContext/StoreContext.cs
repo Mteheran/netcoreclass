@@ -59,12 +59,10 @@ namespace api.DBContext
                                 .ToTable("UserType")
                                 .HasData(StoreInitializer.GetUserTypes());
 
-            builder.Entity<UserType>().HasMany<User>("User")
+            builder.Entity<UserType>().HasMany<User>("Users")
                                     .WithOne("UserType")
                                     .OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<Sale>()
-                                .ToTable("Sale")
-                                .HasKey(p=> p.IdSale);   
+          
             builder.Entity<User>()
                                 .ToTable("User")
                                 .HasKey(p=> p.IdUser);          
@@ -72,25 +70,31 @@ namespace api.DBContext
             builder.Entity<User>().HasData(StoreInitializer.GetUsers());
 
             builder.Entity<User>()
-                                .HasOne<UserType>("UserType")
-                                .WithMany("Users")
-                                .HasForeignKey(p=> p.IdUser_Type)
-                                .OnDelete(DeleteBehavior.Cascade); 
+                                .HasOne<UserType>("UserType");
 
             builder.Entity<User>().HasMany<Invoice>("Invoices")
-                                    .WithOne("Invoice")
+                                    .WithOne("User")
                                     .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Invoice>()
                                 .ToTable("Invoice")
                                 .HasKey(p=> p.IdInvoice);
-            builder.Entity<Invoice>().HasData(StoreInitializer.GetUserTypes()); 
+            builder.Entity<Invoice>().HasData(StoreInitializer.GetInvoices()); 
             builder.Entity<Invoice>()
                                 .HasOne<User>("User")
                                 .WithMany("Invoices")
                                 .HasForeignKey(p=> p.IdUser)
-                                .OnDelete(DeleteBehavior.Cascade);                               
+                                .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<Sale>()
+                                .ToTable("Sale")
+                                .HasKey(p=> p.IdSale);   
+
+            builder.Entity<Sale>()
+                                .HasOne<Invoice>("Invoice");
+
+            builder.Entity<Sale>()
+                                .HasOne<Product>("Product");                                 
             
         }
 
