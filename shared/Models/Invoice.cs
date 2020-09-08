@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 namespace shared.Models
 {
@@ -18,6 +19,8 @@ namespace shared.Models
         public Guid IdUser {get;set;} 
 
         public virtual User User {get;set;} 
+
+        public virtual ICollection<Sale> Sales {get;set;} 
 
     }
 }

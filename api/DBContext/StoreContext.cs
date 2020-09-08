@@ -16,6 +16,8 @@ namespace api.DBContext
         public DbSet<UserType> UserTypes {get;set;}
         public DbSet<User> Users {get;set;}
 
+        public DbSet<UserUserType> UserUserTypes {get;set;}
+
         public StoreContext(DbContextOptions<StoreContext> options) : base(options) 
         {
             
@@ -70,7 +72,9 @@ namespace api.DBContext
             builder.Entity<User>().HasData(StoreInitializer.GetUsers());
 
             builder.Entity<User>()
-                                .HasOne<UserType>("UserType");
+                                .HasOne<UserType>("UserType")
+                                .WithMany("Users")
+                                .HasForeignKey(p=> p.IdUser_Type);
 
             builder.Entity<User>().HasMany<Invoice>("Invoices")
                                     .WithOne("User")
@@ -91,10 +95,18 @@ namespace api.DBContext
                                 .HasKey(p=> p.IdSale);   
 
             builder.Entity<Sale>()
-                                .HasOne<Invoice>("Invoice");
+                                .HasOne<Invoice>("Invoice")
+                                .WithMany("Sales")
+                                .HasForeignKey(p=> p.IdInvoice);
 
             builder.Entity<Sale>()
-                                .HasOne<Product>("Product");                                 
+                                .HasOne<Product>("Product")
+                                .WithMany("Sales")
+                                .HasForeignKey(p=> p.IdProduct);
+
+            builder.Entity<UserUserType>()
+                                .ToView("UserUserType")
+                                .HasKey(p=> p.IdUser);                              
             
         }
 

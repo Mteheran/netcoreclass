@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace shared.Models
@@ -23,6 +24,8 @@ namespace shared.Models
         [ForeignKey("Category")]
         public Guid IdCategory {get;set;} 
         public virtual Category Category {get;set;} 
+
+        public virtual ICollection<Sale> Sales {get;set;} 
 
     }
 }

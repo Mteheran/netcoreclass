@@ -97,5 +97,22 @@ namespace api.Controllers
             else
                 return NotFound();
         }
+
+        [HttpGet]
+        [Route("byview")]
+        public ActionResult<IEnumerable<UserUserType>> GetByView()
+        {
+            return context.UserUserTypes;
+        }
+
+        [HttpGet]
+        [Route("byidbysp/{id}")]
+        public ActionResult<IEnumerable<UserUserType>> GetByIdBySP(string id)
+        {
+            
+             //return Ok(context.UserUserTypes.FromSqlRaw("SP_SelectUserUserTypeById @Id={0}",id).AsEnumerable());
+             return Ok(context.UserUserTypes.FromSqlInterpolated($"SP_SelectUserUserTypeById @Id={id}").AsEnumerable());
+        }
+
     }
 }

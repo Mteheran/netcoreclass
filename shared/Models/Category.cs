@@ -13,6 +13,7 @@ namespace shared.Models
         public Guid IdCategory {get;set;} = new Guid();
 
         [MaxLength(250)]
+        [Required]
         public string Description_Category {get;set;}
 
         //[JsonIgnore]
