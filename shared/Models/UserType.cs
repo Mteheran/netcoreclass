@@ -15,7 +15,7 @@ namespace shared.Models
         public string Description_Type {get; set;}
 
          //[JsonIgnore]
-        public virtual ICollection<User> PrUsouser {get;set;} 
+        public virtual ICollection<User> Users {get;set;} 
         
     }
 }

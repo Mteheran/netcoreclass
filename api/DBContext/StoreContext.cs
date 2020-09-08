@@ -34,9 +34,9 @@ namespace api.DBContext
                                     .WithOne("Category")
                                     .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Invoice>()
-                                .ToTable("Invoice")
-                                .HasKey(p=> p.IdInvoice);
+                                
+            
+            
 
             builder.Entity<Product>()
                                 .ToTable("Product")
@@ -59,7 +59,7 @@ namespace api.DBContext
                                 .ToTable("UserType")
                                 .HasData(StoreInitializer.GetUserTypes());
 
-            builder.Entity<UserType>().HasMany<UserType>("User")
+            builder.Entity<UserType>().HasMany<User>("User")
                                     .WithOne("UserType")
                                     .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Sale>()
@@ -73,9 +73,23 @@ namespace api.DBContext
 
             builder.Entity<User>()
                                 .HasOne<UserType>("UserType")
-                                .WithMany("User")
+                                .WithMany("Users")
                                 .HasForeignKey(p=> p.IdUser_Type)
                                 .OnDelete(DeleteBehavior.Cascade); 
+
+            builder.Entity<User>().HasMany<Invoice>("Invoices")
+                                    .WithOne("Invoice")
+                                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Invoice>()
+                                .ToTable("Invoice")
+                                .HasKey(p=> p.IdInvoice);
+            builder.Entity<Invoice>().HasData(StoreInitializer.GetUserTypes()); 
+            builder.Entity<Invoice>()
+                                .HasOne<User>("User")
+                                .WithMany("Invoices")
+                                .HasForeignKey(p=> p.IdUser)
+                                .OnDelete(DeleteBehavior.Cascade);                               
 
             
         }

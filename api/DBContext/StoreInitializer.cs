@@ -12,6 +12,7 @@ namespace api.DBContext
         private static IEnumerable<Product> Products;
         private static IEnumerable<UserType> UserTypes;
         private static IEnumerable<User> Users;
+        private static IEnumerable<Invoice> Invoices;
 
         public static IEnumerable<Category> GetCategories()
         {
@@ -123,7 +124,28 @@ namespace api.DBContext
 
             Users = users;
             return Users;
-        } 
+        }
+
+        public static IEnumerable<Invoice> GetInvoices()
+        {
+            if(Users == null) Users = GetUsers();
+
+            List<Invoice> invoices = new List<Invoice>();
+
+            foreach(var item in  Users)
+            {
+                    invoices.Add(new Invoice()
+                    {
+                      IdUser = item.IdUser,
+                      CreateTime = DateTime.Now                      
+                    });
+
+                    
+            }
+
+            Invoices = invoices;
+            return Invoices;
+        }  
         
     }
 }

@@ -26,5 +26,7 @@ namespace shared.Models
         [ForeignKey("UserType")]
         public Guid IdUser_Type {get;set;} 
         public virtual UserType UserType {get;set;} 
+
+        public virtual ICollection<Product> Invoices {get;set;} 
     }
 }
