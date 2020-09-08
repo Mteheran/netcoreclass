@@ -9,6 +9,7 @@ namespace shared.Models
     public class Sale
     { 
         public Guid IdSale {get;set;}
+        [ForeignKey("UserType")]
         public Guid IdInvoice {get;set;}
         public Guid IdProduct {get;set;}
         public int Quantity {get;set;}
