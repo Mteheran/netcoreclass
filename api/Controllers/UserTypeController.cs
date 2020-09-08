@@ -93,7 +93,7 @@ namespace api.Controllers
 
             if (usertypeFound != null)
             {
-                context.Products.Remove(usertypeFound);
+                context.UserTypes.Remove(usertypeFound);
                 await context.SaveChangesAsync();
                 return Ok();
             }
