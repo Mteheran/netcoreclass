@@ -1,5 +1,7 @@
 
 using System;
+using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 namespace shared.Models
 {
     public class Invoice
@@ -11,7 +13,6 @@ namespace shared.Models
         [Required]
         public DateTime CreateTime {get;set;}
 
-        [ForeignKey("User")]
         public Guid IdUser {get;set;} 
 
         public virtual User User {get;set;} 
