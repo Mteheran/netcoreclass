@@ -10,6 +10,9 @@ namespace api.DBContext
     {
         private static IEnumerable<Category> Categories;
         private static IEnumerable<Product> Products;
+        private static IEnumerable<UserType> UserTypes;
+        private static IEnumerable<User> Users;
+
         public static IEnumerable<Category> GetCategories()
         {
             List<Category> categories = new List<Category>();
@@ -35,7 +38,7 @@ namespace api.DBContext
             });
 
             Categories = categories;
-            return categories;
+            return Categories;
         } 
 
          public static IEnumerable<Product> GetProducts()
@@ -63,6 +66,63 @@ namespace api.DBContext
 
             Products = products;
             return Products;
+        } 
+
+        public static IEnumerable<UserType> GetUserTypes()
+        {
+            List<UserType> usertypes = new List<UserType>();
+            
+            usertypes.Add(new UserType()
+            {
+                IdUser_Type = Guid.NewGuid(),
+                Description_Type = "Tipo Usuario 1"
+            });
+
+             
+            usertypes.Add(new UserType()
+            {
+                IdUser_Type = Guid.NewGuid(),
+                Description_Type = "Tipo Usuario 2"
+            });
+
+            usertypes.Add(new UserType()
+            {
+                IdUser_Type = Guid.NewGuid(),
+                Description_Type = "Tipo Usuario 3"
+            });
+
+            UserTypes = usertypes;
+            return UserTypes;
+        } 
+
+
+        public static IEnumerable<User> GetUsers()
+        {
+            if(UserTypes == null) UserTypes = GetUserTypes();
+
+            List<User> users = new List<User>();
+
+            foreach(var item in  UserTypes)
+            {
+                    users.Add(new User()
+                    {
+                      IdUser_Type = item.IdUser_Type,
+                      Username = "Usuario" + DateTime.Now.Millisecond,
+                      Password = "Pass" + DateTime.Now.Millisecond,
+                      Email = "correo" + DateTime.Now.Millisecond +"@correo.com"
+                    });
+
+                    users.Add(new User()
+                    {
+                      IdUser_Type = item.IdUser_Type,
+                      Username = "Usuario" + DateTime.Now.Millisecond,
+                      Password = "Pass" + DateTime.Now.Millisecond,
+                      Email = "correo" + DateTime.Now.Millisecond +"@correo.com"
+                    });
+            }
+
+            Users = users;
+            return Users;
         } 
         
     }

@@ -14,7 +14,7 @@ namespace api.DBContext
         public DbSet<Product> Products {get;set;}
         public DbSet<Sale> Sales {get;set;}
         public DbSet<UserType> UserTypes {get;set;}
-        DbSet<User> Users {get;set;}
+        public DbSet<User> Users {get;set;}
 
         public StoreContext(DbContextOptions<StoreContext> options) : base(options) 
         {
@@ -54,12 +54,28 @@ namespace api.DBContext
             builder.Entity<UserType>()
                                 .ToTable("UserType")
                                 .HasKey(p=> p.IdUser_Type);
+
+            builder.Entity<UserType>()
+                                .ToTable("UserType")
+                                .HasData(StoreInitializer.GetUserTypes());
+
+            builder.Entity<UserType>().HasMany<UserType>("User")
+                                    .WithOne("UserType")
+                                    .OnDelete(DeleteBehavior.Cascade);
             builder.Entity<Sale>()
                                 .ToTable("Sale")
                                 .HasKey(p=> p.IdSale);   
             builder.Entity<User>()
                                 .ToTable("User")
-                                .HasKey(p=> p.IdUser);                  
+                                .HasKey(p=> p.IdUser);          
+            
+            builder.Entity<User>().HasData(StoreInitializer.GetUsers());
+
+            builder.Entity<User>()
+                                .HasOne<UserType>("UserType")
+                                .WithMany("User")
+                                .HasForeignKey(p=> p.IdUser_Type)
+                                .OnDelete(DeleteBehavior.Cascade); 
 
             
         }

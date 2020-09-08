@@ -7,9 +7,15 @@ namespace shared.Models
 {
     public class UserType
     {
+        [Key]
+        [Required]
+        public Guid IdUser_Type {get; set;} = new Guid();
 
-        public Guid IdUser_Type {get; set;}
+        [MaxLength(250)]
         public string Description_Type {get; set;}
+
+         //[JsonIgnore]
+        public virtual ICollection<User> PrUsouser {get;set;} 
         
     }
 }
