@@ -15,6 +15,11 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.EntityFrameworkCore.Proxies;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.OData.Edm;
+using Microsoft.AspNet.OData.Builder;
+using shared.Models;
+
 namespace api
 {
     public class Startup
@@ -39,6 +44,14 @@ namespace api
             // using Microsoft.EntityFrameworkCore;
             services.AddDbContext<StoreContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddOData();
+
+            services.AddCors();
+
+            services.AddMvc(options => { options.EnableEndpointRouting = false; }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson();
+
+            services.AddResponseCaching();
             
         }
 
@@ -54,12 +67,37 @@ namespace api
 
             app.UseRouting();
 
+            app.UseResponseCaching();
+
+            app.UseCors(options => 
+            {
+                options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+            });
+
             app.UseAuthorization();
+
+            app.UseMvc(routebuilder => 
+            {
+                routebuilder.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
+                routebuilder.MapODataServiceRoute("odata", "odata", GetDemModel());
+                routebuilder.EnableDependencyInjection();
+            });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
+
+        IEdmModel GetDemModel()
+        {
+            var odataBuilder = new ODataConventionModelBuilder();
+            odataBuilder.EntitySet<Category>("Categories");
+            odataBuilder.EntitySet<User>("Users");
+            odataBuilder.EntitySet<UserType>("UserTypes");
+
+            return odataBuilder.GetEdmModel();
+        }
+
     }
 }

@@ -6,11 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using api.DBContext;
 using Microsoft.EntityFrameworkCore;
 using shared.Models;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Query;
 
 namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableQuery]
     public class UserController : ControllerBase
     {
         StoreContext context;
@@ -22,9 +25,11 @@ namespace api.Controllers
         } 
 
         [HttpGet]
+        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All)] 
+        [ResponseCache( Duration=60 )]
         public ActionResult<IEnumerable<User>> Get()
         {
-            return context.Users;
+            return context.Users.ToList();
         }
 
         [HttpGet("{id}")]

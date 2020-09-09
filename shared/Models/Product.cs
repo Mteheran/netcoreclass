@@ -9,6 +9,7 @@ namespace shared.Models
 {
     public class Product
     {
+        [Key]
         public Guid IdProduct {get;set;} = Guid.NewGuid();
 
         [Required]

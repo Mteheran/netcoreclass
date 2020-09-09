@@ -22,6 +22,7 @@ namespace api.Controllers
         } 
 
         [HttpGet]
+        [ResponseCache(Duration=60)]
         public ActionResult<IEnumerable<Category>> Get()
         {
             return context.Categories;
