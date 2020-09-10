@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using api.DBContext;
 using Microsoft.EntityFrameworkCore;
 using shared.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace api.Controllers
 {
+    [EnableCors("category")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -21,8 +23,7 @@ namespace api.Controllers
             context.Database.EnsureCreated();
         } 
 
-        [HttpGet]
-        [ResponseCache(Duration=60)]
+        //[ResponseCache(Duration=60)]
         public ActionResult<IEnumerable<Category>> Get()
         {
             return context.Categories;
@@ -41,56 +42,5 @@ namespace api.Controllers
                 return NotFound();
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] string value)
-        {
-            try   
-            {
-                var category = new Category();
-                category.Description_Category = value;
-                context.Categories.Add(category);
-                await context.SaveChangesAsync();
-                return Ok();
-
-            }
-            catch(Exception)
-            {
-                return BadRequest();
-            }           
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(string id, [FromBody] string value)
-        {
-             if(!Guid.TryParse(id, out var categoryId)) return BadRequest();
-
-            var categoryFound = context.Categories.FirstOrDefault(p=> p.IdCategory == Guid.Parse(id));
-
-            if (categoryFound!= null)
-            {
-                categoryFound.Description_Category = value;
-                await context.SaveChangesAsync();
-                return Ok();
-            }
-            else
-                return NotFound();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string id)
-        {
-            if(!Guid.TryParse(id, out var categoryId)) return BadRequest();
-
-            var categoryFound = context.Categories.FirstOrDefault(p=> p.IdCategory == Guid.Parse(id));
-
-            if (categoryFound!= null)
-            {
-                context.Categories.Remove(categoryFound);
-                await context.SaveChangesAsync();
-                return Ok();
-            }
-            else
-                return NotFound();
-        }
     }
 }

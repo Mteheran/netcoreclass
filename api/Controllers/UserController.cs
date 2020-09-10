@@ -14,7 +14,7 @@ namespace api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableQuery]
-    public class UserController : ControllerBase
+    public class UserController : ODataController
     {
         StoreContext context;
 
@@ -26,10 +26,9 @@ namespace api.Controllers
 
         [HttpGet]
         [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All)] 
-        [ResponseCache( Duration=60 )]
-        public ActionResult<IEnumerable<User>> Get()
+        public IQueryable<User> Get()
         {
-            return context.Users.ToList();
+            return context.Users;
         }
 
         [HttpGet("{id}")]

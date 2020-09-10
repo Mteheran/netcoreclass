@@ -34,9 +34,7 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           services.AddControllers().AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            );
+           services.AddControllers(options=> options.EnableEndpointRouting = false);
 
             //services.AddDbContext<StoreContext>(p=>
             //p.UseLazyLoadingProxies(false).UseInMemoryDatabase("DBStore"));
@@ -45,13 +43,27 @@ namespace api
             services.AddDbContext<StoreContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddOData();
+            services.AddCors(options => 
+            {
+                options.DefaultPolicyName = "default";
 
-            services.AddCors();
+                options.AddPolicy("default",
+                builder => {
+                    builder.AllowAnyHeader().WithMethods("GET", "POST");
+                });
+
+                options.AddPolicy("category",
+                builder => {
+                    builder.AllowAnyHeader().WithMethods("GET", "POST", "PUT")
+                        .WithOrigins("http://127.0.0.1:5500");
+                });
+            });
 
             services.AddMvc(options => { options.EnableEndpointRouting = false; }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson();
 
             services.AddResponseCaching();
+
+            services.AddOData();        
             
         }
 
@@ -69,19 +81,17 @@ namespace api
 
             app.UseResponseCaching();
 
-            app.UseCors(options => 
-            {
-                options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-            });
+            app.UseCors("default");
 
             app.UseAuthorization();
 
-            app.UseMvc(routebuilder => 
+            app.UseMvc(routeBuilder =>
             {
-                routebuilder.Count().Filter().OrderBy().Expand().Select().MaxTop(null);
-                routebuilder.MapODataServiceRoute("odata", "odata", GetDemModel());
-                routebuilder.EnableDependencyInjection();
+                routeBuilder.Expand().Select().OrderBy().Filter();
+                routeBuilder.EnableDependencyInjection();
+                routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
             });
+
 
             app.UseEndpoints(endpoints =>
             {
@@ -89,7 +99,7 @@ namespace api
             });
         }
 
-        IEdmModel GetDemModel()
+        IEdmModel GetEdmModel()
         {
             var odataBuilder = new ODataConventionModelBuilder();
             odataBuilder.EntitySet<Category>("Categories");
