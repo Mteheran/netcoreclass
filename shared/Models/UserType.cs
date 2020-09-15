@@ -13,6 +13,7 @@ namespace shared.Models
         [Required]
         public Guid IdUser_Type {get; set;} = new Guid();
 
+        [Required]
         [MaxLength(250)]
         public string Description_Type {get; set;}
 

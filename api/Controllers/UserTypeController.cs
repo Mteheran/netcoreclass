@@ -36,14 +36,14 @@ namespace api.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<string> Get(string id)
+        public ActionResult<UserType> Get(string id)
         {
             if (!Guid.TryParse(id, out var usertypeId)) return BadRequest();
 
             var usertypeFound = context.UserTypes.FirstOrDefault(p => p.IdUser_Type == usertypeId);
 
             if (usertypeFound != null)
-                return Ok(usertypeFound);
+                return usertypeFound;
             else
                 return NotFound();
         }

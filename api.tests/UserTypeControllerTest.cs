@@ -4,17 +4,29 @@ using System.Linq;
 using Xunit;
 using api.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using shared.Models;
+using AutoFixture;
 
 namespace api.tests
 {
     public class UserTypeControllerTest
     {
+        public Fixture fixture {get;set;}
+
+        public UserTypeControllerTest()
+        {
+            fixture = new Fixture();
+        }
+
+
         [Fact]
         public void GetUserTypes()
         {
             using var context  =   StoreContextInitializer.GetContext();
             var userTypeController = new UserTypeController(context);
+
             var userTypes = userTypeController.Get();
+            
             Assert.NotEmpty(userTypes.Value);
             Assert.Equal(3, userTypes.Value.Count());
             Assert.Equal("Tipo Usuario 2", userTypes.Value.ToList()[1].Description_Type);
@@ -26,13 +38,13 @@ namespace api.tests
         {
             using var context  =   StoreContextInitializer.GetContext();
             var userTypeController = new UserTypeController(context);
-            var userTypes = userTypeController.Get();
+            var userType = userTypeController.Get().Value.ToList()[0];
+            
+            var userTypes = userTypeController.Get(userType.IdUser_Type.ToString());
 
 
-            //assert
-            Assert.NotEmpty(userTypes.Value);
-            Assert.Equal(3, userTypes.Value.Count());
-            Assert.Equal("Tipo Usuario 1", userTypes.Value.ToList()[0].Description_Type);
+            //assert        
+            Assert.Equal("Tipo Usuario 1", userTypes.Value.Description_Type);
 
         }
 
@@ -49,12 +61,26 @@ namespace api.tests
         }
 
         [Fact]
-        public void GetCategory_ById_NotFound()
+        public void GetUserType_ById_NotFound()
         {
             using var context  =   StoreContextInitializer.GetContext();
             var userTypeController = new UserTypeController(context);
             var result = userTypeController.Get(Guid.Empty.ToString());
             Assert.IsType<NotFoundResult>(result.Result);
+
+        }
+
+
+        [Fact]
+        public void PostUserType()
+        {
+            using var context  =   StoreContextInitializer.GetContext();
+            var userTypeController = new UserTypeController(context);        
+            var userTypeAuto = fixture.Build<UserType>().Without(p=> p.Users).With(p=> p.Description_Type, "UserType test").Create();
+
+            var result = userTypeController.Post(userTypeAuto);
+
+            Assert.IsType<OkResult>(result.Result);
 
         }
     }

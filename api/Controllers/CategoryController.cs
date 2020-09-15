@@ -48,11 +48,16 @@ namespace api.Controllers
         {
             try   
             {
-                var category = new Category();
-                category.Description_Category = value;
-                context.Categories.Add(category);
-                await context.SaveChangesAsync();
-                return Ok();
+                if(!string.IsNullOrEmpty(value))
+                { 
+                    var category = new Category();
+                    category.Description_Category = value;
+                    context.Categories.Add(category);
+                    await context.SaveChangesAsync();
+                    return Ok();
+                }  
+               
+               return BadRequest();
 
             }
             catch(Exception)
