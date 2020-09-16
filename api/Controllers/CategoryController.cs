@@ -7,12 +7,14 @@ using api.DBContext;
 using Microsoft.EntityFrameworkCore;
 using shared.Models;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("category")]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         StoreContext context;

@@ -175,7 +175,7 @@ namespace api.tests
 
             //assert
             Assert.IsType<OkResult>(result.Result);
-            Assert.Equal(2, categoryList.Value.Count());
+            Assert.Equal(2, categoryList.Value.ToList().Count());
 
         }
     }
