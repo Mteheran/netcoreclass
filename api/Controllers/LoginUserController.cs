@@ -16,7 +16,7 @@ namespace api.Controllers
     [ApiController]
     public class LoginUserController : ControllerBase
     {
-         private readonly IConfiguration configuration;
+        private readonly IConfiguration configuration;
         public LoginUserController(IConfiguration config)
         {
             configuration = config;

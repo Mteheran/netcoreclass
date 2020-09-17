@@ -76,7 +76,7 @@ namespace api.tests
         {
             using var context  =   StoreContextInitializer.GetContext();
             var userTypeController = new UserTypeController(context);        
-            var userTypeAuto = fixture.Build<UserType>().Without(p=> p.Users).With(p=> p.Description_Type, "UserType test").Create();
+            var userTypeAuto = fixture.Build<UserType>().Without(p=> p.Users).With(p=> p.Description_Type).Create();
 
             var result = userTypeController.Post(userTypeAuto);
 

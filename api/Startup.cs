@@ -22,6 +22,13 @@ using shared.Models;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Net.Http.Headers;
+using System.Reflection;
+using System.IO;
 
 namespace api
 {
@@ -37,7 +44,14 @@ namespace api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           services.AddControllers(options=> options.EnableEndpointRouting = false);
+           services.AddControllers(options=> {
+                options.EnableEndpointRouting = false;
+                var policy = new AuthorizationPolicyBuilder()
+                                        .RequireAuthenticatedUser()
+                                        .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+           }
+           );
 
             //services.AddDbContext<StoreContext>(p=>
             //p.UseLazyLoadingProxies(false).UseInMemoryDatabase("DBStore"));
@@ -82,11 +96,52 @@ namespace api
                     };
             });  
 
-            services.AddMvc(options => { options.EnableEndpointRouting = false; }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson();
+            services.AddMvc(options => { 
+                options.EnableEndpointRouting = false; 
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson();
 
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<OutputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                        outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                    }
+
+                foreach (var inputFormatter in options.InputFormatters.OfType<InputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
+                {
+                        inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+            });
+            
             services.AddResponseCaching();
 
-            services.AddOData();        
+            //services.AddOData(); 
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Web API",
+                    Description = "Class demo",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Shayne Boyer",
+                        Email = string.Empty,
+                        Url = new Uri("https://twitter.com/spboyer"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Use under LICX",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });    
             
         }
 
@@ -100,6 +155,13 @@ namespace api
 
             app.UseHttpsRedirection();
 
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "api netcore");
+            });
+
             app.UseRouting();
 
             app.UseResponseCaching();
@@ -110,12 +172,12 @@ namespace api
 
             app.UseAuthorization();
 
-            app.UseMvc(routeBuilder =>
-            {
-                routeBuilder.Expand().Select().OrderBy().Filter();
-                routeBuilder.EnableDependencyInjection();
-                routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
-            });
+            //app.UseMvc(routeBuilder =>
+            //{
+            //    routeBuilder.Expand().Select().OrderBy().Filter();
+            //    routeBuilder.EnableDependencyInjection();
+            //    routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
+            //});
 
 
             app.UseEndpoints(endpoints =>
