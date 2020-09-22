@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+using shared.Models;
+using api.DBContext;
+using System.Linq;
 
 namespace api.Controllers
 {
@@ -17,15 +20,26 @@ namespace api.Controllers
     public class LoginUserController : ControllerBase
     {
         private readonly IConfiguration configuration;
-        public LoginUserController(IConfiguration config)
+
+        private readonly StoreContext context;
+        public LoginUserController(IConfiguration config, StoreContext db)
         {
             configuration = config;
+            context = db;
         }
 
         [AllowAnonymous]
         [HttpGet("RequestToken")]
-        public JsonResult RequestToken()
+        public ActionResult<JsonResult> RequestToken(User userLogin)
         {
+
+            var userfound = context.Users.FirstOrDefault(p=> p.Username == userLogin.Username);
+            
+            if(userfound == null)
+                return NotFound();
+            if(!userfound.Password.Equals(userfound.Password))
+                return Unauthorized();
+            var userType = context.UserTypes.FirstOrDefault(p=> p.IdUser_Type == userfound.IdUser_Type);
             DateTime utcNow = DateTime.UtcNow;
 
             //List<Claim> claims = new List<Claim>
@@ -39,8 +53,8 @@ namespace api.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[] 
                 {
-                    new Claim(ClaimTypes.Name, "User 1"),
-                    new Claim(ClaimTypes.Role, "User")
+                    new Claim(ClaimTypes.Name, userfound.Username),
+                    new Claim(ClaimTypes.Role, userType.Description_Type)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -59,7 +73,7 @@ namespace api.Controllers
             var securityToken = jwtSecurityTokenHandler.CreateToken(tokenDescriptor);
             string token  = jwtSecurityTokenHandler.WriteToken(securityToken);
 
-            return new JsonResult(new { token });
+            return Ok(new JsonResult(new { token }));
         }
     }
 }
