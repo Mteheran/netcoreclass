@@ -100,19 +100,6 @@ namespace api
                 options.EnableEndpointRouting = false; 
             }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0).AddNewtonsoftJson();
 
-            services.AddMvcCore(options =>
-            {
-                foreach (var outputFormatter in options.OutputFormatters.OfType<OutputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
-                {
-                        outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                    }
-
-                foreach (var inputFormatter in options.InputFormatters.OfType<InputFormatter>().Where(x => x.SupportedMediaTypes.Count == 0))
-                {
-                        inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                }
-            });
-            
             services.AddResponseCaching();
 
             //services.AddOData(); 

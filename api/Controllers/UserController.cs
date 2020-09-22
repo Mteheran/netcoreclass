@@ -13,8 +13,7 @@ namespace api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [EnableQuery]
-    public class UserController : ODataController
+    public class UserController : ControllerBase
     {
         StoreContext context;
 
@@ -25,7 +24,6 @@ namespace api.Controllers
         } 
 
         [HttpGet]
-        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All)] 
         public IQueryable<User> Get()
         {
             return context.Users;
