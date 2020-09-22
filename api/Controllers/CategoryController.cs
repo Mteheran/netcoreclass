@@ -15,7 +15,7 @@ namespace api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("category")]
-    [Authorize(Roles= "Admin")]
+    [Authorize(Roles= "Tipo Usuario 1, Tipo Usuario 2, Tipo Usuario 3")]
     public class CategoryController : ControllerBase
     {
         StoreContext context;

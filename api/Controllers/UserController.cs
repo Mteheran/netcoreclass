@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using shared.Models;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
+using api.Tools;
 
 namespace api.Controllers
 {
@@ -47,6 +48,7 @@ namespace api.Controllers
         {
             if(ModelState.IsValid)
             {
+                value.Password = EncryptData.EncryptText(value.Password);
                 context.Users.Add(value);
                 await context.SaveChangesAsync();
                 return Ok();
@@ -68,7 +70,7 @@ namespace api.Controllers
                 if (userFound!= null)
                 {
                     userFound.Username = value.Username;
-                    userFound.Password = value.Password;
+                    userFound.Password = EncryptData.EncryptText(value.Password);
                     userFound.Email = value.Email;
                     userFound.IdUser_Type = value.IdUser_Type;
                     await context.SaveChangesAsync();

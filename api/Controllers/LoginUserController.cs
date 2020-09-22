@@ -12,6 +12,7 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using shared.Models;
 using api.DBContext;
 using System.Linq;
+using api.Tools;
 
 namespace api.Controllers
 {
@@ -29,15 +30,15 @@ namespace api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("RequestToken")]
-        public ActionResult<JsonResult> RequestToken(User userLogin)
+        [HttpPost("RequestToken")]
+        public ActionResult RequestToken(UserLogin userLogin)
         {
 
             var userfound = context.Users.FirstOrDefault(p=> p.Username == userLogin.Username);
             
             if(userfound == null)
                 return NotFound();
-            if(!userfound.Password.Equals(userfound.Password))
+            if(!userfound.Password.Equals(EncryptData.EncryptText(userLogin.Password)))
                 return Unauthorized();
             var userType = context.UserTypes.FirstOrDefault(p=> p.IdUser_Type == userfound.IdUser_Type);
             DateTime utcNow = DateTime.UtcNow;
@@ -73,7 +74,7 @@ namespace api.Controllers
             var securityToken = jwtSecurityTokenHandler.CreateToken(tokenDescriptor);
             string token  = jwtSecurityTokenHandler.WriteToken(securityToken);
 
-            return Ok(new JsonResult(new { token }));
+            return Ok(new { token });
         }
     }
 }
